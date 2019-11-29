@@ -1,6 +1,4 @@
 #!/usr/bin/python3
-#http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#memmap
-#http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/
 
 import pygame
 import math
@@ -12,15 +10,15 @@ import sys
 # Chip8 Hardware
 memory 		= [0] * 4096	# Memory (4096 Bytes)						[uint8/byte type]
 stack 		= [0] * 16		# 16 16-bit Stack to store return addresses when subroutines are called
-v 			= [0] * 16		# 16 V[x] general purpose 8-bit registers
+v 		= [0] * 16		# 16 V[x] general purpose 8-bit registers
 graphics	= [0] * 64 * 32	# 64x32-pixel monochrome display (0,0)	(63,0) | (0,31)	(63,31)
 key 		= [0] * 16		# 16 keys keyboard. 1 represent key pressed.
 opcode 		= 0				# CPU Operation Code						[uint16 type]
-pc 			= 512			# Program Counter (start on address 512)	[uint16 type]
-i 			= 0				# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
-sp 			= 0				# Stack Pointer
-dt			= 0				# The delay timer is active whenever the delay timer register (DT) is non-zero.
-st			= 0				# The sound timer is active whenever the sound timer register (ST) is non-zero.
+pc 		= 512			# Program Counter (start on address 512)	[uint16 type]
+i 		= 0				# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
+sp 		= 0				# Stack Pointer
+dt		= 0				# The delay timer is active whenever the delay timer register (DT) is non-zero.
+st		= 0				# The sound timer is active whenever the sound timer register (ST) is non-zero.
 # Variables
 cycle		= 1				# CPU Cycle
 opc_family	= 0				# Define the main group of opsets
@@ -39,7 +37,7 @@ white		= (255, 255, 255)
 green		= (0, 255, 0)
 blue 		= (0, 0, 128)
 black		= (0, 0, 0)
-red			= (255, 0, 0)
+red		= (255, 0, 0)
 # PyGame
 display_surface = ""
 
@@ -87,7 +85,7 @@ def initialize_fonts(memory):
 
 ########## SHOW MEMORY (BINARY) ##########
 def show_memory_binary(memory):
-	index=0 					# start  [0]
+	index=0 			# start  [0]
 	while index < 4096: 		# end [4096]
 	    print (memory[index:index+16])
 	    index+=16
@@ -96,7 +94,7 @@ def show_memory_binary(memory):
 
 ############ SHOW MEMORY (HEX) ############
 def show_memory_hex(memory):
-	index=0 					# start  [0]
+	index=0 			# start  [0]
 	while index < 810: 		# end [4096]
 		for i in range(index, index + 16):
 			print ("\"" + hex(int(memory[i])) + "\"", end =" ")
@@ -415,9 +413,6 @@ def x8000 ():
 	# Set Vx = Vy - Vx, set VF = NOT borrow.
 	# If Vy > Vx, then VF is set to 1, otherwise 0. Then Vx is subtracted from Vy, and the results stored in Vx.
 	elif (opc == "8007"):
-		#print (v[x])
-		#print (v[y])
-
 		if (v[y] > v[x]):
 			v[0xF] = 1
 		else:
@@ -503,8 +498,6 @@ def xA000():
 
 
 ############################ 0xB000 instruction set ############################
-# NOT TESTED YET exit() in the end
-################################################################################
 # Bnnn - JP V0, addr
 # Jump to location nnn + V0.
 # The program counter is set to nnn plus the value of V0.
@@ -515,7 +508,6 @@ def xB000():
 	pc = nnn + v[0x0]
 
 	print ("\tOpcode Bnnn executed. - Jump to location nnn + V0.")
-	exit()
 
 
 ############################ 0xC000 instruction set ############################
@@ -775,7 +767,7 @@ def xF000 ():
 def cpu():
 	global memory, pc, opc_family, dt, opcode, cycle, st
 
-    # Read the Opcode (mem[pc]+mem[pc+1])
+        # Read the Opcode (mem[pc]+mem[pc+1])
 	# Format used to always have 2 digits
 	opcode_tmp=format(memory[pc], '02x') + format(memory[pc+1], '02x')
 	# Make opcode binary after processing to save
@@ -1005,6 +997,3 @@ initialize_fonts(memory)
 initialize_graphics()
 initialize_cpu_loop()
 
-######### TODO LIST ########
-# 1) PROBLEMA NO SOM
-# 2) # Limit the frame rate to 60 FPS (clock.tick(6000))
