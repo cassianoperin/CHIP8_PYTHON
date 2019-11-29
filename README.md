@@ -36,3 +36,11 @@ Select the number of the game.
 	
 
 Where ROM_NAME is the name of one of the games inside "roms" folder.
+
+## Known issues
+* Need to implement FPS Limit
+* Need to implement a correct DelayTimer
+* Need to implement a correct SoundTimer
+* Using pygame full screen refresh at each DRAW (Dxyn) instruction, which is really slow. Created a workaround to just refresh screen at 10 cycles/instructions executed.
+
+
