@@ -6,8 +6,10 @@
 ## Usage
 
 1. From simple menu:
-	$ chmod +x menu.py chip8.py
-	$ ./menu.py
+
+$ chmod +x menu.py chip8.py
+$ ./menu.py
+
 
 Select the number of the game.
 
