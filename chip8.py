@@ -951,9 +951,8 @@ def initialize_cpu_loop():
 						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
 
 
-
 		############### FRAMESKIP #################
-		if ( cycle % 10 == 0 ):
+		if ( cycle % 5 == 0 ):
 			pygame.display.flip()
 
 		########## FRAME BY FRAME DRAW ############
@@ -996,4 +995,3 @@ initialize_fonts(memory)
 #show_graphics(graphics)
 initialize_graphics()
 initialize_cpu_loop()
-
