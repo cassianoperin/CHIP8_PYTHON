@@ -980,16 +980,15 @@ def initialize_cpu_loop():
 							y = y + 1
 							x = nro
 						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
+			### RENDER MODE 1
+			### Slow, need to draw the entire screen each draw instruction
+			#pygame.display.flip()
 
-
+		### RENDER MODE 2
+		### Update the entire screen each X cycles
 		############### FRAMESKIP #################
-		if ( cycle % 10 == 0 ):
+		if ( cycle % 16 == 0 ):
 			pygame.display.flip()
-
-		########## FRAME BY FRAME DRAW ############
-		#pygame.display.flip()
-		# OR
-		#pygame.display.update()
 
 		# Release Buttons
 		key = [0] * 16
@@ -1013,13 +1012,13 @@ def initialize_cpu_loop():
 ################################## PROCESSING ##################################
 
 # Receive ROM NAME as argument or exit
-#if (len (sys.argv) != 2):
-#    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
-#    exit()
-#load_rom("roms/"+sys.argv[1], memory)
+if (len (sys.argv) != 2):
+    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
+    exit()
+load_rom("roms/"+sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-load_rom("roms/VBRIX", memory)
+#load_rom("roms/VBRIX", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
