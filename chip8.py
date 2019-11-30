@@ -5,6 +5,7 @@ import math
 import random
 import os
 import time
+import threading
 import sys
 
 # Chip8 Hardware
@@ -761,6 +762,23 @@ def xF000 ():
 
 		print ("\tOpcode Fx65 executed. Read registers V0 through Vx from memory starting at location I.")
 
+def delaytimer (value):
+	#print (value)
+	while (value > 0):
+		time.sleep(0.016)
+		#print (value)
+		value -= 1
+
+def soundtimer (value):
+	#print (value)
+	while (value > 0):
+		time.sleep(0.016)
+		#print (value)
+		value -= 1
+		if (value ==0):
+			pygame.mixer.init()
+			sound = pygame.mixer.Sound('sounds/beep.wav')
+			sound.play()
 
 
 ############################ MAIN CPU LOOP ############################
@@ -780,18 +798,31 @@ def cpu():
 	show()
 
 	# Delay Timer
+	# if (dt > 0):
+	# 	dt -= 1
 	if (dt > 0):
-		dt -= 1
+		thread_delay = threading.Thread(target=delaytimer, args=(dt,))
+		# Send the dt value to be handled by the threads
+		dt=0
+		#print (st)
+		thread_delay.start()
 
 	# Sound Timer
+	# if (st > 0):
+	# 	st -= 1
+	# 	if (st == 0):
+	# 		#print ("BEEP")
+	# 		#os.system("afplay xp.wav")
+	# 		pygame.mixer.init()
+	# 		sound = pygame.mixer.Sound('sounds/beep.wav')
+	# 		sound.play()
+	### Implemented Threading for SoundTimer
 	if (st > 0):
-		st -= 1
-		if (st == 0):
-			#print ("BEEP")
-			#os.system("afplay xp.wav")
-			pygame.mixer.init()
-			sound = pygame.mixer.Sound('sounds/beep.wav')
-			sound.play()
+		thread_sound = threading.Thread(target=soundtimer, args=(st,))
+		# Send the st value to be handled by the threads
+		st=0
+		#print (st)
+		thread_sound.start()
 
 	########### EXECUTE CPU OPCODE #########
 	if (opc_family == 0):			# 0x0000
@@ -952,7 +983,7 @@ def initialize_cpu_loop():
 
 
 		############### FRAMESKIP #################
-		if ( cycle % 5 == 0 ):
+		if ( cycle % 10 == 0 ):
 			pygame.display.flip()
 
 		########## FRAME BY FRAME DRAW ############
@@ -982,13 +1013,13 @@ def initialize_cpu_loop():
 ################################## PROCESSING ##################################
 
 # Receive ROM NAME as argument or exit
-if (len (sys.argv) != 2):
-    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
-    exit()
-load_rom("roms/"+sys.argv[1], memory)
+#if (len (sys.argv) != 2):
+#    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
+#    exit()
+#load_rom("roms/"+sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-#load_rom("roms/VBRIX", memory)
+load_rom("roms/VBRIX", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
