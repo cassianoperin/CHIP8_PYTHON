@@ -31,9 +31,11 @@ Select the number of the game.
 2. Directly from emulator:
 
 	$ chmod +x chip8.py
-	
+
 	$ ./chip8.py ROM_NAME
-	
+
 
 Where ROM_NAME is the name of one of the games inside "roms" folder.
 
+## TODO
+1. BLITZ game doesn't work

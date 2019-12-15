@@ -358,11 +358,11 @@ def x8000 ():
 
 		# Every time the value exceeds the size of register,
 		# Store only the 8 least significant bits
+		# v[x] += v[y]
 		tmp="{0:016b}".format(v[x] + v[y])[8:]
 		v[x]=(int(tmp, 2))
 
 		# Old implementation, sum values, READ THE DOCS IN CASE OF PROBLEMS
-		#v[x] += v[y]
 
 		pc += 2
 		print ("\tOpcode 8xy4 executed. - Set Vx = Vx AND Vy.")
@@ -372,7 +372,7 @@ def x8000 ():
 	# Set Vx = Vx - Vy, set VF = NOT borrow.
 	# If Vx > Vy, then VF is set to 1, otherwise 0. Then Vy is subtracted from Vx, and the results stored in Vx.
 	elif (opc == "8005"):
-		if ( v[x] >= v[y] ): ###NEED TO UNDERSTAND WHY BRIX JUST WORK WITH BIGGER OR EQUALLLLLLLL
+		if ( v[x] >= v[y] ):
 			v[0xF] = 1
 		else:
 			v[0xF] = 0
@@ -562,7 +562,8 @@ def xD000():
 	gpx_position = (v[x] + (64 * v[y]))
 
 	# DEBUG
-	#print ("\tGraphic vector position: " + str(gpx_position) + " (Value: " + str(graphics[x + (64 * y)]) + ")" )
+	# print ("\tGraphic vector position: " + str(gpx_position) + " (Value: " + str(graphics[x + (64 * y)]) + ")\n" )
+
 
 	# Print N Bytes from address I in V[x]V[y] position of the screen
 	for byte in range(0, n):
@@ -585,6 +586,9 @@ def xD000():
 					v[0xF] = 1
 				# After, XOR the graphics[index] (DRAW)
 				graphics[index] ^= 1
+
+			# DEBUG
+			# print ("\tByte: " +str(byte)+ "\tSprite: "+str(sprite)+ "\tBinary: "+  binary + "\tbit: " +str(bit)+ "\tIndex: " + str(index) + "\tbinary[bit]: " + binary[bit] + "\tGraphics[index]: " + str(graphics[index]) )
 
 	pc += 2
 	drawflag = 1
@@ -617,7 +621,7 @@ def xE000 ():
 	# Ex9E - SKP Vx
 	# Skip next instruction if key with the value of Vx is pressed.
 	# Checks the keyboard, and if the key corresponding to the value of Vx is currently in the down position, PC is increased by 2.
-	elif (opc =="e09e" ):
+	elif (opc == "e09e" ):
 		if ( key[v[x]] == 1 ):
 			pc += 4
 			print ("\tOpcode e0a1 - Key " + str(v[x]) + " PRESSED, skip one instruction")
@@ -731,11 +735,8 @@ def xF000 ():
 	# In the original CHIP-8 implementation, and also in CHIP-48, I is left incremented after this instruction had been executed. In SCHIP, I is left unmodified.
 	elif (opc =="f055"):
 
-		if (x == 0):
-			memory[i] = v[x]
-		else:
-			for j in range (0, x + 1):
-				memory[i + j] = v[j]
+		for j in range (0, x + 1):
+			memory[i + j] = v[j]
 
 		pc += 2
 
@@ -1012,13 +1013,13 @@ def initialize_cpu_loop():
 ################################## PROCESSING ##################################
 
 # Receive ROM NAME as argument or exit
-if (len (sys.argv) != 2):
-    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
-    exit()
-load_rom("roms/"+sys.argv[1], memory)
+# if (len (sys.argv) != 2):
+#     print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
+#     exit()
+# load_rom("roms/"+sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-#load_rom("roms/VBRIX", memory)
+load_rom("roms/BLITZ", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
