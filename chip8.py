@@ -30,11 +30,11 @@ cycle_fwd	= 0			# When paused, add one CPU cycle
 # Graphics
 # define the RGB values
 # NUMBER OR COLUMNS (X) AND LINES (Y)
-X = 64
-Y = 32
+X		= 64
+Y		= 32
 # MULTIPLICATE THE SIZE OF X and Y TO BIGGER RESOLUTIONS
-PIXEL_SIZE_X = 20
-PIXEL_SIZE_Y = 20
+PIXEL_SIZE_X	= 20
+PIXEL_SIZE_Y	= 20
 # Colors
 white		= (255, 255, 255)
 green		= (0, 255, 0)
