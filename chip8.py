@@ -978,6 +978,8 @@ def initialize_cpu_loop():
 					# Execute one cpu cycle
 					cpu()
 					time.sleep(0.3)
+					# Unflag cycle_fwd Fla
+					cycle_fwd = 0
 
 		# Call the main CPU Function
 		# If pause button not pressed, run a new cpu cycle
@@ -1021,8 +1023,6 @@ def initialize_cpu_loop():
 
 		# Release Buttons
 		key = [0] * 16
-		# Unflag cycle_fwd Fla
-		cycle_fwd = 0
 
 		# DEBUG - SEARCH FOR VALUES LARGER THAN 255 in V[]
 		#for k in range(0, 15):
@@ -1049,7 +1049,7 @@ def initialize_cpu_loop():
 # load_rom("roms/"+sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-load_rom("roms/VBRIX", memory)
+load_rom("roms/BLITZ", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
