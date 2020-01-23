@@ -9,23 +9,23 @@ import threading
 import sys
 
 # Chip8 Hardware
-memory		= [0] * 4096	# Memory (4096 Bytes)						[uint8/byte type]
-stack		= [0] * 16	# 16 16-bit Stack to store return addresses when subroutines are called
-v		= [0] * 16	# 16 V[x] general purpose 8-bit registers
-graphics	= [0] * 64 * 32	# 64x32-pixel monochrome display (0,0)	(63,0) | (0,31)	(63,31)
-key		= [0] * 16	# 16 keys keyboard. 1 represent key pressed.
-opcode		= 0		# CPU Operation Code						[uint16 type]
-pc		= 512		# Program Counter (start on address 512)	[uint16 type]
-i		= 0		# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
-sp		= 0		# Stack Pointer
-dt		= 0		# The delay timer is active whenever the delay timer register (DT) is non-zero.
-st		= 0		# The sound timer is active whenever the sound timer register (ST) is non-zero.
+memory		= [0] * 4096		# Memory (4096 Bytes)						[uint8/byte type]
+stack		= [0] * 16		# 16 16-bit Stack to store return addresses when subroutines are called
+v		= [0] * 16		# 16 V[x] general purpose 8-bit registers
+graphics	= [0] * 64 * 32		# 64x32-pixel monochrome display (0,0)	(63,0) | (0,31)	(63,31)
+key		= [0] * 16		# 16 keys keyboard. 1 represent key pressed.
+opcode		= 0			# CPU Operation Code						[uint16 type]
+pc		= 512			# Program Counter (start on address 512)	[uint16 type]
+i		= 0			# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
+sp		= 0			# Stack Pointer
+dt		= 0			# The delay timer is active whenever the delay timer register (DT) is non-zero.
+st		= 0			# The sound timer is active whenever the sound timer register (ST) is non-zero.
 # Variables
-cycle		= 1				# CPU Cycle
-opc_family	= 0				# Define the main group of opsets
-drawflag	= 0				# Inform the window manager to print the graphic vector
-pause		= 0				# Pause emulation
-cycle_fwd	= 0				# When paused, add one CPU cycle
+cycle		= 1			# CPU Cycle
+opc_family	= 0			# Define the main group of opsets
+drawflag	= 0			# Inform the window manager to print the graphic vector
+pause		= 0			# Pause emulation
+cycle_fwd	= 0			# When paused, add one CPU cycle
 
 # Graphics
 # define the RGB values
