@@ -9,7 +9,9 @@ CHIP-8 Emulator writen in Python3.
 
 [Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
 
-
+## Features
+* Pause Emulation
+* Step Forward CPU Cycle (Debug)
 
 ## Requirements
 * Python3
