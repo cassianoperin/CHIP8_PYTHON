@@ -969,12 +969,13 @@ def initialize_cpu_loop():
 				time.sleep(0.2)
 			else:
 				pause = 0
-				time.sleep(0.1)
+				time.sleep(0.2)
 
 
 		if keys[pygame.K_LEFTBRACKET]:
 			if (pause == 1):
 					cycle_fwd = 1
+					# Execute one cpu cycle
 					cpu()
 					time.sleep(0.3)
 
@@ -1006,18 +1007,22 @@ def initialize_cpu_loop():
 						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
 			### RENDER MODE 1
 			### Slow, need to draw the entire screen each draw instruction
-			pygame.display.flip()
+			# pygame.display.flip()
 
 		### RENDER MODE 2
 		### Update the entire screen each X cycles
 		############### FRAMESKIP #################
-		# if ( cycle % 16 == 0 ):
-		# 	pygame.display.flip()
+		# Force do draw when in pause/cycle forward debug mode
+		if (cycle_fwd == 1):
+			pygame.display.flip()
+		else:
+			if ( cycle % 16 == 0 ):
+				pygame.display.flip()
 
 		# Release Buttons
 		key = [0] * 16
 		# Unflag cycle_fwd Fla
-		cycle_fwd = 1
+		cycle_fwd = 0
 
 		# DEBUG - SEARCH FOR VALUES LARGER THAN 255 in V[]
 		#for k in range(0, 15):
