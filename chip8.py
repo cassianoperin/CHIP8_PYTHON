@@ -9,21 +9,23 @@ import threading
 import sys
 
 # Chip8 Hardware
-memory 		= [0] * 4096	# Memory (4096 Bytes)						[uint8/byte type]
-stack 		= [0] * 16		# 16 16-bit Stack to store return addresses when subroutines are called
-v 		= [0] * 16		# 16 V[x] general purpose 8-bit registers
+memory		= [0] * 4096	# Memory (4096 Bytes)						[uint8/byte type]
+stack		= [0] * 16		# 16 16-bit Stack to store return addresses when subroutines are called
+v			= [0] * 16		# 16 V[x] general purpose 8-bit registers
 graphics	= [0] * 64 * 32	# 64x32-pixel monochrome display (0,0)	(63,0) | (0,31)	(63,31)
-key 		= [0] * 16		# 16 keys keyboard. 1 represent key pressed.
-opcode 		= 0				# CPU Operation Code						[uint16 type]
-pc 		= 512			# Program Counter (start on address 512)	[uint16 type]
-i 		= 0				# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
-sp 		= 0				# Stack Pointer
-dt		= 0				# The delay timer is active whenever the delay timer register (DT) is non-zero.
-st		= 0				# The sound timer is active whenever the sound timer register (ST) is non-zero.
+key			= [0] * 16		# 16 keys keyboard. 1 represent key pressed.
+opcode		= 0				# CPU Operation Code						[uint16 type]
+pc			= 512			# Program Counter (start on address 512)	[uint16 type]
+i			= 0				# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
+sp			= 0				# Stack Pointer
+dt			= 0				# The delay timer is active whenever the delay timer register (DT) is non-zero.
+st			= 0				# The sound timer is active whenever the sound timer register (ST) is non-zero.
 # Variables
 cycle		= 1				# CPU Cycle
 opc_family	= 0				# Define the main group of opsets
 drawflag	= 0				# Inform the window manager to print the graphic vector
+pause		= 0				# Pause emulation
+cycle_fwd	= 0				# When paused, add one CPU cycle
 
 # Graphics
 # define the RGB values
@@ -889,9 +891,12 @@ def initialize_graphics():
 ################################## MAIN LOOP ###################################
 
 def initialize_cpu_loop():
-	global key, display_surface, drawflag
+	global key, display_surface, drawflag, pause, cycle_fwd
 	# infinite loop
 	while True :
+
+		# Reset the Draw Flag
+		drawflag = 0
 
 		# Handle QUIT event
 		for event in pygame.event.get() :
@@ -903,6 +908,11 @@ def initialize_cpu_loop():
 
 		# Handle Keyboard INPUTS
 		keys = pygame.key.get_pressed()
+
+		# Close emulator
+		if keys[pygame.K_ESCAPE]:
+			pygame.quit()
+			exit()
 
 		if keys[pygame.K_0]:
 			key[0] = 1
@@ -952,13 +962,26 @@ def initialize_cpu_loop():
 		if keys[pygame.K_w]:
 			key[15] = 1
 
+		# Pause
+		if keys[pygame.K_p]:
+			if (pause == 0):
+				pause = 1
+				time.sleep(0.2)
+			else:
+				pause = 0
+				time.sleep(0.1)
 
-		# Reset the Draw Flag
-		drawflag = 0
+
+		if keys[pygame.K_LEFTBRACKET]:
+			if (pause == 1):
+					cycle_fwd = 1
+					cpu()
+					time.sleep(0.3)
 
 		# Call the main CPU Function
-		#print (opc_family)
-		cpu()
+		# If pause button not pressed, run a new cpu cycle
+		if (pause != 1):
+			cpu()
 
 		# Create the window and handle with Graphics
 		if (drawflag == 1):
@@ -983,16 +1006,18 @@ def initialize_cpu_loop():
 						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
 			### RENDER MODE 1
 			### Slow, need to draw the entire screen each draw instruction
-			#pygame.display.flip()
+			pygame.display.flip()
 
 		### RENDER MODE 2
 		### Update the entire screen each X cycles
 		############### FRAMESKIP #################
-		if ( cycle % 16 == 0 ):
-			pygame.display.flip()
+		# if ( cycle % 16 == 0 ):
+		# 	pygame.display.flip()
 
 		# Release Buttons
 		key = [0] * 16
+		# Unflag cycle_fwd Fla
+		cycle_fwd = 1
 
 		# DEBUG - SEARCH FOR VALUES LARGER THAN 255 in V[]
 		#for k in range(0, 15):
@@ -1019,7 +1044,7 @@ def initialize_cpu_loop():
 # load_rom("roms/"+sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-load_rom("roms/BLITZ", memory)
+load_rom("roms/INVADERS", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
