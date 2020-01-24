@@ -1,4 +1,4 @@
-# Python3 CHIP-8 Emulator
+# Python CHIP-8 Emulator
 
 CHIP-8 Emulator writen in Python3.
 
