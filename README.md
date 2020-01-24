@@ -2,8 +2,6 @@
 
 CHIP-8 Emulator writen in Python3.
 
-<img width="430" alt="pong" src="https://user-images.githubusercontent.com/35104351/73111019-90cb1680-3f00-11ea-9e92-5a9f55b447d1.png">
-
 <img width="430" alt="pong" src="https://github.com/cassianoperin/Chip8_Python3/blob/master/images/pong.png">
 
 ## Features
