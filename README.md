@@ -39,5 +39,5 @@ Select the number of the game.
 
 Where ROM_NAME is the name of one of the games inside "roms" folder.
 
-## TODO
-1. BLITZ game doesn't work
+## IMPROVEMENTS
+* Equalize game speed
