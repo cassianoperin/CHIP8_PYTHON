@@ -68,3 +68,11 @@ Where ROM_NAME is the name of one of the games inside "roms" folder.
 	`P`: Pause and Resume emulation
 	
 	`[`: Step forward one CPU cycle with paused emulation (for debug and study purposes)
+	
+	`ESC`: Exit emulator
+
+## Improvements
+
+1. Equalize game speed (some games runs too fast, other slow)
+2. Key pressing cause slowness
+3. Improve draw method
