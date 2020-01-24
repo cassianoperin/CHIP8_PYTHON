@@ -914,52 +914,52 @@ def initialize_cpu_loop():
 			pygame.quit()
 			exit()
 
-		if keys[pygame.K_0]:
+		if keys[pygame.K_x]:
 			key[0] = 1
 
 		if keys[pygame.K_1]:
 			key[1] = 1
 
-		if keys[pygame.K_4]:
+		if keys[pygame.K_2]:
 			key[2] = 1
 
 		if keys[pygame.K_3]:
 			key[3] = 1
 
-		if keys[pygame.K_2]:
+		if keys[pygame.K_q]:
 			key[4] = 1
 
-		if keys[pygame.K_5]:
+		if keys[pygame.K_w]:
 			key[5] = 1
 
-		if keys[pygame.K_6]:
+		if keys[pygame.K_e]:
 			key[6] = 1
 
-		if keys[pygame.K_7]:
+		if keys[pygame.K_a]:
 			key[7] = 1
 
-		if keys[pygame.K_8]:
+		if keys[pygame.K_s]:
 			key[8] = 1
 
-		if keys[pygame.K_9]:
+		if keys[pygame.K_d]:
 			key[9] = 1
 
-		if keys[pygame.K_LEFT]:
+		if keys[pygame.K_z]:
 			key[10] = 1
 
-		if keys[pygame.K_RIGHT]:
+		if keys[pygame.K_c]:
 			key[11] = 1
 
-		if keys[pygame.K_UP]:
+		if keys[pygame.K_4]:
 			key[12] = 1
 
-		if keys[pygame.K_DOWN]:
+		if keys[pygame.K_r]:
 			key[13] = 1
 
-		if keys[pygame.K_q]:
+		if keys[pygame.K_f]:
 			key[14] = 1
 
-		if keys[pygame.K_w]:
+		if keys[pygame.K_v]:
 			key[15] = 1
 
 		# Pause
@@ -1009,17 +1009,17 @@ def initialize_cpu_loop():
 						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
 			### RENDER MODE 1
 			### Slow, need to draw the entire screen each draw instruction
-			# pygame.display.flip()
+			pygame.display.flip()
 
 		### RENDER MODE 2
 		### Update the entire screen each X cycles
 		############### FRAMESKIP #################
 		# Force do draw when in pause/cycle forward debug mode
-		if (cycle_fwd == 1):
-			pygame.display.flip()
-		else:
-			if ( cycle % 16 == 0 ):
-				pygame.display.flip()
+		#if (cycle_fwd == 1):
+		#	pygame.display.flip()
+		#else:
+		#	if ( cycle % 16 == 0 ):
+		#		pygame.display.flip()
 
 		# Release Buttons
 		key = [0] * 16
@@ -1046,10 +1046,10 @@ def initialize_cpu_loop():
 if (len (sys.argv) != 2):
     print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
     exit()
+#load_rom(rom_path,memory)
 load_rom(sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-#load_rom("/Users/cassiano/git/Chip8_Python3/roms/BLITZ", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
