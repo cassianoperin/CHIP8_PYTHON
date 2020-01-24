@@ -2,6 +2,7 @@
 
 CHIP-8 Emulator writen in Python3.
 
+![Pong](images/screenshot.png)
 https://github.com/cassianoperin/Chip8_Python3/blob/master/images/pong.png
 
 
