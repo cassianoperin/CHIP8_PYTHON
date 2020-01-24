@@ -10,13 +10,14 @@ CHIP-8 Emulator writen in Python3.
 [Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
 
 ## Features
-* Pause Emulation
-* Step Forward CPU Cycle (Debug)
+* Pause Emulation (Key: **P**)
+* Step Forward CPU Cycle for Debug (Key **[** in Pause mode) 
 
 ## Requirements
-* Python3
-* pygame (on MAC, 2.0.0.dev5 or latest)
-  pip install pygame==2.0.0.dev5
+1. Python3
+2. Pygame (on MAC, 2.0.0.dev5 or latest)
+
+	$ pip install pygame==2.0.0.dev5
 
 ## Usage
 
@@ -38,6 +39,3 @@ Select the number of the game.
 
 
 Where ROM_NAME is the name of one of the games inside "roms" folder.
-
-## IMPROVEMENTS
-* Equalize game speed
