@@ -2,10 +2,6 @@
 
 CHIP-8 Emulator writen in Python3.
 
-![Pong](images/screenshot.png)
-https://github.com/cassianoperin/Chip8_Python3/blob/master/images/pong.png
-
-
 ## Base Documentation
 [Cowgod's Chip-8 Technical Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#0.0)
 
