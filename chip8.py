@@ -523,7 +523,7 @@ def xC000():
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
 
-	kk = opcode & int("00F0", 16)
+	kk = opcode & int("00FF", 16)
 
 	v[x] = random.randint(0,255) & kk
 
@@ -1043,13 +1043,13 @@ def initialize_cpu_loop():
 ################################## PROCESSING ##################################
 
 # Receive ROM NAME as argument or exit
-# if (len (sys.argv) != 2):
-#     print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
-#     exit()
-# load_rom("roms/"+sys.argv[1], memory)
+if (len (sys.argv) != 2):
+    print ("\nUsage: " + sys.argv[0] + " ROM NAME!\nExiting.\n")
+    exit()
+load_rom(sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
-load_rom("roms/BLITZ", memory)
+#load_rom("/Users/cassiano/git/Chip8_Python3/roms/BLITZ", memory)
 initialize_fonts(memory)
 #show_memory_binary(memory)
 #show_memory_hex(memory)
