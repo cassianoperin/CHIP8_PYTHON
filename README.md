@@ -2,18 +2,11 @@
 
 CHIP-8 Emulator writen in Python3.
 
-## Base Documentation
-[Cowgod's Chip-8 Technical Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#0.0)
-
-[How to write an emulator (CHIP-8 interpreter) — Multigesture.net](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)
-
-[Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
+<img width="430" alt="pong" src="https://user-images.githubusercontent.com/35104351/73111019-90cb1680-3f00-11ea-9e92-5a9f55b447d1.png">
 
 ## Features
 * Pause and resume emulation
 * Step Forward CPU Cycle for Debug
-
-
 
 ## Requirements
 - Python3
@@ -70,6 +63,13 @@ Where ROM_NAME is the name of one of the games inside "roms" folder.
 	`[`: Step forward one CPU cycle with paused emulation (for debug and study purposes)
 	
 	`ESC`: Exit emulator
+
+## Documentation
+[Cowgod's Chip-8 Technical Reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM#0.0)
+
+[How to write an emulator (CHIP-8 interpreter) — Multigesture.net](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)
+
+[Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
 
 ## Improvements
 
