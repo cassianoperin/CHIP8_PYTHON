@@ -1,6 +1,6 @@
 # Python CHIP-8 Emulator
 
-CHIP-8 Emulator writen in Python3.
+CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and understood.
 
 <img width="430" alt="pong" src="https://github.com/cassianoperin/Chip8_Python3/blob/master/images/pong.png">
 
