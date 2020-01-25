@@ -766,17 +766,10 @@ def xF000 ():
 
 		print ("\tOpcode Fx65 executed. Read registers V0 through Vx from memory starting at location I.")
 
-def delaytimer (value):
-	#print (value)
-	while (value > 0):
-		time.sleep(0.016)
-		#print (value)
-		value -= 1
-
 def soundtimer (value):
 	#print (value)
 	while (value > 0):
-		time.sleep(0.016)
+		time.sleep(0.0016)
 		#print (value)
 		value -= 1
 		if (value ==0):
@@ -787,9 +780,9 @@ def soundtimer (value):
 
 ############################ MAIN CPU LOOP ############################
 def cpu():
-	global memory, pc, opc_family, dt, opcode, cycle, st
+	global memory, pc, opc_family, dt, opcode, cycle, st, drawflag
 
-        # Read the Opcode (mem[pc]+mem[pc+1])
+	# Read the Opcode (mem[pc]+mem[pc+1])
 	# Format used to always have 2 digits
 	opcode_tmp=format(memory[pc], '02x') + format(memory[pc+1], '02x')
 	# Make opcode binary after processing to save
@@ -798,18 +791,19 @@ def cpu():
 	# Set the Opcode Family
 	opc_family=opcode & int("F000", 16)
 
+	# Reset the Draw Flag
+	drawflag = 0
+
 	# Print the Debug Information
 	show()
 
 	# Delay Timer
-	# if (dt > 0):
-	# 	dt -= 1
 	if (dt > 0):
-		thread_delay = threading.Thread(target=delaytimer, args=(dt,))
-		# Send the dt value to be handled by the threads
-		dt=0
-		#print (st)
-		thread_delay.start()
+		# Emulate 60hz = 1 / 60
+		time.sleep(0.00016)
+		dt -= 1
+		cycle += 1
+		return
 
 	# Sound Timer
 	# if (st > 0):
@@ -895,9 +889,6 @@ def initialize_cpu_loop():
 	global key, display_surface, drawflag, pause, cycle_fwd
 	# infinite loop
 	while True :
-
-		# Reset the Draw Flag
-		drawflag = 0
 
 		# Handle QUIT event
 		for event in pygame.event.get() :
