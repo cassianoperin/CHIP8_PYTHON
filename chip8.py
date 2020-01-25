@@ -659,13 +659,15 @@ def xF000 ():
 	# All execution stops until a key is pressed, then the value of that key is stored in Vx.
 	elif (opc =="f00a"):
 		for k in range (0, len(key)):
+			pressed = 0
 			if (key[k] == 1):
 				v[x] = k
+				pressed = 1
 				pc +=2
 				print ("\tOpcode Fx0A executed. - Wait for a key press (PRESSED)")
 				# Stop after find the first key pressed
 				break
-			else:
+		if pressed == 0:
 				print ("\tOpcode Fx0A executed. - Wait for a key press (NOT PRESSED)")
 
 	# Fx15 - LD DT, Vx
