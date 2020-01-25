@@ -24,7 +24,7 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 	`$ ./menu.py`
 
 
-Select the number of the game.
+	Select the number of the game.
 
 
 2. Directly from emulator:
