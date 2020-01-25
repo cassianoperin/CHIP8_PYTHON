@@ -24,7 +24,6 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 	`$ ./menu.py`
 
 
-
 Select the number of the game.
 
 
@@ -33,9 +32,6 @@ Select the number of the game.
 	`$ chmod +x chip8.py`
 
 	`$ ./chip8.py ROM_NAME`
-
-
-Where ROM_NAME is the name of one of the games inside "roms" folder.
 
 3. Keys
 - Original COSMAC Keyboard Layout:
