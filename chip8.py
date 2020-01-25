@@ -49,9 +49,8 @@ display_surface = ""
 
 ######## SHOW DEBUG INFORMATION ########
 def show():
-    global cycle, opc_family
-    print ("\n" + str(cycle) + "\tPC: " + str(pc) + "(" + hex(pc) + ")" + "\tOpcode: " + hex(opcode) + "(" + str(hex(opc_family)) + ")" + "\tSP: " + str(sp) + "\tStack: " + str(stack) + \
-        "\tV[x]: " + str(v) + "\tI: " + str(i) + "\tDT: " + str(dt) + "\tST: " + str(st))
+	global cycle, opc_family
+	print ("\n" + str(cycle) + "\tOpcode: " + hex(opcode) + "(" + str(hex(opc_family)) + ")" + "\tPC: " + str(pc) + "(" + hex(pc) + ")"  + "\tSP: " + str(sp) + "\tStack: " + str(stack) + "\tV[x]: " + str(v) + "\tI: " + str(i) + "\tDT: " + str(dt) + "\tST: " + str(st) + "\tKey: " + str(key))
 
 
 ####### LOAD ROM FILE INTO MEMORY #######
