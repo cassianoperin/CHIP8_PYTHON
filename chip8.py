@@ -50,7 +50,7 @@ red		= (255, 0, 0)
 # PyGame
 display_surface = ""
 # debug mode
-debug = False
+debug = True
 
 ################################################################################
 ################################## FUNCTIONS ###################################
@@ -1067,11 +1067,13 @@ def initialize_cpu_loop():
 		cycle_duration = clock.tick(FPS_LIMIT) #300 FPS LIMIT
 		cycle_duration_sum += cycle_duration
 		if debug:
-			print ("Cycle duration: " + str(cycle_duration))
-			print ("Cycle duration SUM: " + str(cycle_duration_sum))
+			if pause == 0:
+				print ("Cycle duration: " + str(cycle_duration))
+				print ("Cycle duration SUM: " + str(cycle_duration_sum))
 		if (cycle_duration_sum) > ticker_millisec:
 			if debug:
-				print ("Timer count > " + str(ticker_millisec) + " ms. Clock Ticker SET!")
+				if pause == 0:
+					print ("Timer count > " + str(ticker_millisec) + " ms. Clock Ticker SET!")
 			cycle_duration_sum = 0
 			ticker = True
 
