@@ -57,7 +57,9 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 	`P`: Pause and Resume emulation
 	
 	`[`: Step forward one CPU cycle with paused emulation (for debug and study purposes)
-	
+
+	`9`: Reset
+
 	`ESC`: Exit emulator
 
 ## Documentation
@@ -68,7 +70,5 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 [Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
 
 ## Improvements
-
-1. Equalize game speed (some games runs too fast, other slow)
-2. Key pressing cause slowness
-3. Improve draw method
+1. Key pressing cause slowness
+2. Improve draw method
