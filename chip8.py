@@ -929,7 +929,8 @@ def initialize_graphics():
 ################################## MAIN LOOP ###################################
 
 def initialize_cpu_loop():
-	global key, display_surface, drawflag, pause, cycle_fwd, ticker, cycle_duration, cycle_duration_sum, FPS_LIMIT, debug
+	global key, display_surface, drawflag, pause, cycle_fwd, ticker, cycle_duration, cycle_duration_sum, FPS_LIMIT, \
+	debug, graphics, opcode, stack, pc, v, i, sp, dt, st, cycle
 
 	# infinite loop
 	while True :
@@ -1007,7 +1008,7 @@ def initialize_cpu_loop():
 				pause = 0
 				time.sleep(0.2)
 
-
+		# CPU Cycle Forwarder
 		if keys[pygame.K_LEFTBRACKET]:
 			if (pause == 1):
 					cycle_fwd = 1
@@ -1016,6 +1017,21 @@ def initialize_cpu_loop():
 					time.sleep(0.3)
 					# Unflag cycle_fwd Fla
 					cycle_fwd = 0
+
+
+		# RESET
+		if keys[pygame.K_9]:
+			stack		= [0] * 16		# 16 16-bit Stack to store return addresses when subroutines are called
+			v		= [0] * 16		# 16 V[x] general purpose 8-bit registers
+			graphics	= [0] * 64 * 32		# 64x32-pixel monochrome display (0,0)	(63,0) | (0,31)	(63,31)
+			key		= [0] * 16		# 16 keys keyboard. 1 represent key pressed.
+			opcode		= 0			# CPU Operation Code						[uint16 type]
+			pc		= 512			# Program Counter (start on address 512)	[uint16 type]
+			i		= 0			# This register is generally used to store memory addresses, so only the lowest (rightmost) 12 bits are usually used.
+			sp		= 0			# Stack Pointer
+			dt		= 0			# The delay timer is active whenever the delay timer register (DT) is non-zero.
+			st		= 0			# The sound timer is active whenever the sound timer register (ST) is non-zero.
+			cycle		= 1			# CPU Cycle
 
 		# Call the main CPU Function
 		# If pause button not pressed, run a new cpu cycle
@@ -1068,12 +1084,12 @@ def initialize_cpu_loop():
 		cycle_duration_sum += cycle_duration
 		if debug:
 			if pause == 0:
-				print ("Cycle duration: " + str(cycle_duration))
-				print ("Cycle duration SUM: " + str(cycle_duration_sum))
+				print ("\tCycle duration: " + str(cycle_duration))
+				print ("\tCycle duration SUM: " + str(cycle_duration_sum))
 		if (cycle_duration_sum) > ticker_millisec:
 			if debug:
 				if pause == 0:
-					print ("Timer count > " + str(ticker_millisec) + " ms. Clock Ticker SET!")
+					print ("\tTimer count > " + str(ticker_millisec) + " ms. CLOCK TICKER SET!")
 			cycle_duration_sum = 0
 			ticker = True
 
