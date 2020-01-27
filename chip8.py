@@ -26,6 +26,12 @@ opc_family	= 0			# Define the main group of opsets
 drawflag	= 0			# Inform the window manager to print the graphic vector
 pause		= 0			# Pause emulation
 cycle_fwd	= 0			# When paused, add one CPU cycle
+# Timers
+cycle_duration = 0
+cycle_duration_sum = 0
+ticker_millisec	=	16	# 1 Hz (1 second / 60)
+ticker = False
+FPS_LIMIT	=	300	# 300 Frames per second LIMIT
 
 # Graphics
 # define the RGB values
@@ -33,8 +39,8 @@ cycle_fwd	= 0			# When paused, add one CPU cycle
 X		= 64
 Y		= 32
 # MULTIPLICATE THE SIZE OF X and Y TO BIGGER RESOLUTIONS
-PIXEL_SIZE_X	= 20
-PIXEL_SIZE_Y	= 20
+Pixel_size_X	= 20
+Pixel_size_Y	= 20
 # Colors
 white		= (255, 255, 255)
 green		= (0, 255, 0)
@@ -43,11 +49,13 @@ black		= (0, 0, 0)
 red		= (255, 0, 0)
 # PyGame
 display_surface = ""
+# debug mode
+debug = False
 
 ################################################################################
 ################################## FUNCTIONS ###################################
 
-######## SHOW DEBUG INFORMATION ########
+######## SHOW debug INFORMATION ########
 def show():
 	global cycle, opc_family
 	print ("\n" + str(cycle) + "\tOpcode: " + hex(opcode) + "(" + str(hex(opc_family)) + ")" + "\tPC: " + str(pc) + "(" + hex(pc) + ")"  + "\tSP: " + str(sp) + "\tStack: " + str(stack) + "\tV[x]: " + str(v) + "\tI: " + str(i) + "\tDT: " + str(dt) + "\tST: " + str(st) + "\tKey: " + str(key))
@@ -132,7 +140,7 @@ def show_graphics(graphics):
 
 ############################ 0x0000 instruction set ############################
 def x0000 ():
-	global  opcode, pc, sp, stack, graphics
+	global  opcode, pc, sp, stack, graphics, debug
 
 	# 00EE - RET
     # Return from a subroutine
@@ -145,14 +153,18 @@ def x0000 ():
 		pc += 2
 		# Decrease the SP
 		sp -= 1
-		print ("\tOpcode 0xee executed. - Return from a subroutine")
+
+		if debug:
+			print ("\tOpcode 0xee executed. - Return from a subroutine")
 
 	# 00E0 - CLS
 	# Clear the display.
 	elif (hex(opcode) !=" 0xee" ):
 		graphics = [0] * 64 * 32
 		pc += 2
-		print ("\tOpcode 0xee executed. - Clear the display.")
+
+		if debug:
+			print ("\tOpcode 0xee executed. - Clear the display.")
 
 
 ############################ 0x1000 instruction set ############################
@@ -160,12 +172,13 @@ def x0000 ():
 # Jump to location nnn.
 # The interpreter sets the program counter to nnn.
 def x1000():
-    global pc
+	global pc, debug
 
-    nnn = opcode & int("0FFF", 16)
-    pc = nnn
+	nnn = opcode & int("0FFF", 16)
+	pc = nnn
 
-    print ("\tOpcode 1nnn executed. - JMP to NNN address.")
+	if debug:
+		print ("\tOpcode 1nnn executed. - JMP to NNN address.")
 
 
 ############################ 0x2000 instruction set ############################
@@ -173,14 +186,15 @@ def x1000():
 # Call subroutine at nnn.
 # The interpreter increments the stack pointer, then puts the current PC on the top of the stack. The PC is then set to nnn.
 def x2000():
-    global sp, stack, pc, opcode
+	global sp, stack, pc, opcode, debug
 
-    sp += 1
-    stack[sp] = pc
-    nnn = opcode & int("0FFF", 16)
-    pc = nnn
+	sp += 1
+	stack[sp] = pc
+	nnn = opcode & int("0FFF", 16)
+	pc = nnn
 
-    print ("\tOpcode 2nnn executed. - Call Subroutine at NNN")
+	if debug:
+		print ("\tOpcode 2nnn executed. - Call Subroutine at NNN")
 
 
 ############################ 0x3000 instruction set ############################
@@ -188,7 +202,7 @@ def x2000():
 # Skip next instruction if Vx = kk.
 # The interpreter compares register Vx to kk, and if they are equal, increments the program counter by 2.
 def x3000():
-	global opcode, pc
+	global opcode, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Need just the first byte
@@ -197,10 +211,12 @@ def x3000():
 
 	if ( v[x] == kk ):
 		pc += 4
-		print ("\tOpcode 3xkk executed. - Equal SKIP ONE")
+		if debug:
+			print ("\tOpcode 3xkk executed. - Equal SKIP ONE")
 	else:
 		pc += 2
-		print ("\tOpcode 3xkk executed. - Different, NOT SKIP")
+		if debug:
+			print ("\tOpcode 3xkk executed. - Different, NOT SKIP")
 
 
 ############################ 0x4000 instruction set ############################
@@ -208,7 +224,7 @@ def x3000():
 # Skip next instruction if Vx != kk.
 # The interpreter compares register Vx to kk, and if they are not equal, increments the program counter by 2.
 def x4000():
-	global opcode, pc
+	global opcode, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
@@ -217,10 +233,12 @@ def x4000():
 
 	if ( v[x] != kk ):
 		pc += 4
-		print ("\tOpcode 4xkk executed. - v[x] != kk, SKIP")
+		if debug:
+			print ("\tOpcode 4xkk executed. - v[x] != kk, SKIP")
 	else:
 		pc += 2
-		print ("\tOpcode 4xkk executed. - v[x] == kk, DONT SKIP")
+		if debug:
+			print ("\tOpcode 4xkk executed. - v[x] == kk, DONT SKIP")
 
 
 ############################ 0x5000 instruction set ############################
@@ -228,7 +246,7 @@ def x4000():
 #Skip next instruction if Vx = Vy.
 #The interpreter compares register Vx to register Vy, and if they are equal, increments the program counter by 2.
 def x5000 ():
-	global opcode, pc, v
+	global opcode, pc, v, debug
 
 	# Map the value of x
 	x = opcode & int("0F00", 16)
@@ -240,11 +258,13 @@ def x5000 ():
 
 	if (v[x] == v[y]):
 		pc += 4
-		print ("\tOpcode 5xy0 executed. - v[x] == v[y], SKIP one instruction.")
+		if debug:
+			print ("\tOpcode 5xy0 executed. - v[x] == v[y], SKIP one instruction.")
 
 	else:
 		pc += 2
-		print ("\tOpcode 5xy0 executed. - v[x] != v[y], DO NOT skip one instruction.")
+		if debug:
+			print ("\tOpcode 5xy0 executed. - v[x] != v[y], DO NOT skip one instruction.")
 
 
 ############################ 0x6000 instruction set ############################
@@ -252,7 +272,7 @@ def x5000 ():
 # Set Vx = kk.
 # The interpreter puts the value kk into register Vx.
 def x6000():
-	global opcode, pc
+	global opcode, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Need just the first byte
@@ -262,7 +282,9 @@ def x6000():
 	v[x] = kk
 
 	pc += 2
-	print ("\tOpcode 6xkk executed. Set Vx = kk.")
+
+	if debug:
+		print ("\tOpcode 6xkk executed. Set Vx = kk.")
 
 
 ############################ 0x7000 instruction set ############################
@@ -270,7 +292,7 @@ def x6000():
 # Set Vx = Vx + kk.
 # Adds the value kk to the value of register Vx, then stores the result in Vx.
 def x7000():
-	global opcode, pc
+	global opcode, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
@@ -287,13 +309,14 @@ def x7000():
 
 	pc += 2
 
-	print ("\tOpcode 7xkk executed. - Vx = Vx + kk.")
+	if debug:
+		print ("\tOpcode 7xkk executed. - Vx = Vx + kk.")
 
 
 ############################ 0x8000 instruction set ############################
 # 0x8000 instruction set
 def x8000 ():
-	global opcode, pc, v
+	global opcode, pc, v, debug
 
 	# Normalize the opcode to map the instruction
 	opc = opcode & int("F00F", 16)
@@ -314,7 +337,8 @@ def x8000 ():
 	if (opc == "8000"):
 		v[x] = v[y]
 		pc += 2
-		print ("\tOpcode 8xy0 executed. - Set Vx = Vy.")
+		if debug:
+			print ("\tOpcode 8xy0 executed. - Set Vx = Vy.")
 
 
 	# Set Vx = Vx OR Vy.
@@ -323,7 +347,8 @@ def x8000 ():
 	elif (opc == "8001"):
 		v[x] = v[x] | v[y]
 		pc += 2
-		print ("\tOpcode 8xy1 executed. - Set Vx = Vx OR Vy.")
+		if debug:
+			print ("\tOpcode 8xy1 executed. - Set Vx = Vx OR Vy.")
 
 
 	# 8xy2 - AND Vx, Vy
@@ -333,7 +358,8 @@ def x8000 ():
 	elif (opc == "8002"):
 		v[x] = v[x] & v[y]
 		pc = pc + 2
-		print ("\tOpcode 8xy2 executed. - Set Vx = Vx AND Vy.")
+		if debug:
+			print ("\tOpcode 8xy2 executed. - Set Vx = Vx AND Vy.")
 
 
 	# 8xy3 - XOR Vx, Vy
@@ -343,7 +369,8 @@ def x8000 ():
 	elif (opc == "8003"):
 		v[x] = v[x] ^ v[y]
 		pc += 2
-		print ("\tOpcode 8xy3 executed. - Set Vx = Vx XOR Vy.")
+		if debug:
+			print ("\tOpcode 8xy3 executed. - Set Vx = Vx XOR Vy.")
 
 
 	# 8xy4 - ADD Vx, Vy
@@ -364,9 +391,9 @@ def x8000 ():
 		v[x]=(int(tmp, 2))
 
 		# Old implementation, sum values, READ THE DOCS IN CASE OF PROBLEMS
-
 		pc += 2
-		print ("\tOpcode 8xy4 executed. - Set Vx = Vx AND Vy.")
+		if debug:
+			print ("\tOpcode 8xy4 executed. - Set Vx = Vx AND Vy.")
 
 
 	# 8xy5 - SUB Vx, Vy
@@ -383,9 +410,10 @@ def x8000 ():
 		if (v[x] < 0):
 			v[x] = 256 + v[x]
 
-
 		pc += 2
-		print ("\tOpcode 8xy5 executed. - Set Vx = Vx - Vy.")
+
+		if debug:
+			print ("\tOpcode 8xy5 executed. - Set Vx = Vx - Vy.")
 
 
 	# 8xy6 - SHR Vx {, Vy}
@@ -406,9 +434,9 @@ def x8000 ():
 		v[x] = v[x] >> 1
 
 		### Original Chip8 INCREMENT I in this instruction ###
-
 		pc += 2
-		print ("\tOpcode 8xy6 executed. - SHR Vx {, Vy}.")
+		if debug:
+			print ("\tOpcode 8xy6 executed. - SHR Vx {, Vy}.")
 
 
 	# 8xy7 - SUBN Vx, Vy
@@ -425,10 +453,9 @@ def x8000 ():
 		if (v[x] < 0):
 			v[x] = 256 + v[x]
 
-
 		pc += 2
-
-		print ("\tOpcode 8xy7 executed. - Vx = Vy - Vx, set VF = NOT borrow.")
+		if debug:
+			print ("\tOpcode 8xy7 executed. - Vx = Vy - Vx, set VF = NOT borrow.")
 
 
 	# 8xyE - SHL Vx {, Vy}
@@ -439,7 +466,6 @@ def x8000 ():
 
 		# Get the FIRST bit of V[x]
 		tmp="{0:08b}".format(v[x])[:1]
-		print (tmp)
 
 		# If the least-significant bit of Vx is 1, then VF is set to 1, otherwise 0.
 		# Then Vx is divided by 2.???? (((THE SHR DO THIS, NOT NECESSARY!)))
@@ -458,9 +484,9 @@ def x8000 ():
 			v[x]=(int(tmp, 2))
 
 		### Original Chip8 INCREMENT I in this instruction ###
-
 		pc += 2
-		print ("\tOpcode 8xyE executed. - SHL Vx {, Vy}. ----- SUSPICIOUS ------")
+		if debug:
+			print ("\tOpcode 8xyE executed. - SHL Vx {, Vy}. ----- SUSPICIOUS ------")
 
 
 ############################ 0x9000 instruction set ############################
@@ -468,7 +494,7 @@ def x8000 ():
 # Skip next instruction if Vx != Vy.
 # The values of Vx and Vy are compared, and if they are not equal, the program counter is increased by 2.
 def x9000():
-	global opcode, pc
+	global opcode, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
@@ -478,10 +504,12 @@ def x9000():
 
 	if ( v[x] != v[y] ):
 		pc += 4
-		print ("\tOpcode 9xy0 executed. - Vx != Vy, SKIP one instruction.")
+		if debug:
+			print ("\tOpcode 9xy0 executed. - Vx != Vy, SKIP one instruction.")
 	else:
 		pc += 2
-		print ("\tOpcode 3xkk executed. - Vx = Vy, DO NOT SKIP one instruction.")
+		if debug:
+			print ("\tOpcode 3xkk executed. - Vx = Vy, DO NOT SKIP one instruction.")
 
 
 ############################ 0xA000 instruction set ############################
@@ -489,14 +517,15 @@ def x9000():
 # Set I = nnn.
 # The value of register I is set to nnn.
 def xA000():
-	global opcode, pc, i
+	global opcode, pc, i, debug
 
 	nnn = opcode & int("0FFF", 16)
 	i = nnn
 
 	pc += 2
 
-	print ("\tOpcode Annn executed. - Set I = nnn.")
+	if debug:
+		print ("\tOpcode Annn executed. - Set I = nnn.")
 
 
 ############################ 0xB000 instruction set ############################
@@ -504,12 +533,13 @@ def xA000():
 # Jump to location nnn + V0.
 # The program counter is set to nnn plus the value of V0.
 def xB000():
-	global opcode, pc, v
+	global opcode, pc, v, debug
 
 	nnn = opcode & int("0FFF", 16)
 	pc = nnn + v[0x0]
 
-	print ("\tOpcode Bnnn executed. - Jump to location nnn + V0.")
+	if debug:
+		print ("\tOpcode Bnnn executed. - Jump to location nnn + V0.")
 
 
 ############################ 0xC000 instruction set ############################
@@ -517,7 +547,7 @@ def xB000():
 # Set Vx = random byte AND kk.
 # The interpreter generates a random number from 0 to 255, which is then ANDed with the value kk. The results are stored in Vx. See instruction 8xy2 for more information on AND.
 def xC000():
-	global opcode, v, pc
+	global opcode, v, pc, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
@@ -528,14 +558,15 @@ def xC000():
 
 	pc += 2
 
-	print ("\tOpcode Cxkk executed. - Vx = random byte AND kk.")
+	if debug:
+		print ("\tOpcode Cxkk executed. - Vx = random byte AND kk.")
 
 
 ############################ 0xD000 instruction set ############################
 # Dxyn - DRW Vx, Vy, nibble
 # Display n-byte sprite starting at memory location I at (Vx, Vy), set VF = collision.
 def xD000():
-	global opcode, i, v, graphics, pc, drawflag
+	global opcode, i, v, graphics, pc, drawflag, debug
 
 	x = opcode & int("0F00", 16)
 	x = x >> 8 # Just need the first byte
@@ -547,17 +578,18 @@ def xD000():
 
 	v[0xF] = 0
 
-	print ("\tOpcode: " + hex(opcode) + " Dxyn - DRAW GRAPHICS! - Address I: " + str(i) +  " Position V[x(" + str(x) + ")]: " + str(v[x]) + ", V[y(" + str(y) + ")]: " + str(v[y]) + " , N: " + str(n) + " bytes.")
+	if debug:
+		print ("\tOpcode: " + hex(opcode) + " Dxyn - DRAW GRAPHICS! - Address I: " + str(i) +  " Position V[x(" + str(x) + ")]: " + str(v[x]) + ", V[y(" + str(y) + ")]: " + str(v[y]) + " , N: " + str(n) + " bytes.")
 
     # Check if y is out of range
 	if (v[y] > 31):
 		v[y] = v[y] % 32
-		print ("\tV[y] > 31, modulus applied")
+		#print ("\tV[y] > 31, modulus applied")
 
     # Check if x is out of range
 	if (v[x] > 63):
 		v[x] = v[x] % 64
-		print ("\tV[x] > 63, modulus applied")
+		#print ("\tV[x] > 63, modulus applied")
 
 	# Translate the x and Y to the Graphics Vector
 	gpx_position = (v[x] + (64 * v[y]))
@@ -588,7 +620,7 @@ def xD000():
 				# After, XOR the graphics[index] (DRAW)
 				graphics[index] ^= 1
 
-			# DEBUG
+			# debug
 			# print ("\tByte: " +str(byte)+ "\tSprite: "+str(sprite)+ "\tBinary: "+  binary + "\tbit: " +str(bit)+ "\tIndex: " + str(index) + "\tbinary[bit]: " + binary[bit] + "\tGraphics[index]: " + str(graphics[index]) )
 
 	pc += 2
@@ -598,7 +630,7 @@ def xD000():
 ############################ 0xE000 instruction set ############################
 # 0xE000 instruction set
 def xE000 ():
-	global opcode, pc, key, v
+	global opcode, pc, key, v, debug
 
 	# Normalize the opcode to map the instruction
 	opc = opcode & int("F0FF", 16)
@@ -613,10 +645,12 @@ def xE000 ():
 	if (opc == "e0a1"):
 		if ( key[v[x]] == 0 ):
 			pc += 4
-			print ("\tOpcode e0a1 - Key " + str(v[x]) + " NOT pressed, skip one instruction")
+			if debug:
+				print ("\tOpcode e0a1 - Key " + str(v[x]) + " NOT pressed, skip one instruction")
 		else:
 			pc += 2
-			print ("\tOpcode e0a1 - Key " + str(v[x]) + " Pressed, continue")
+			if debug:
+				print ("\tOpcode e0a1 - Key " + str(v[x]) + " Pressed, continue")
 
 
 	# Ex9E - SKP Vx
@@ -625,16 +659,18 @@ def xE000 ():
 	elif (opc == "e09e" ):
 		if ( key[v[x]] == 1 ):
 			pc += 4
-			print ("\tOpcode e0a1 - Key " + str(v[x]) + " PRESSED, skip one instruction")
+			if debug:
+				print ("\tOpcode e0a1 - Key " + str(v[x]) + " PRESSED, skip one instruction")
 		else:
 			pc += 2
-			print ("\tOpcode e0a1 - Key " + str(v[x]) + " Not pressed, continue")
+			if debug:
+				print ("\tOpcode e0a1 - Key " + str(v[x]) + " Not pressed, continue")
 
 
 ############################ 0xF000 instruction set ############################
 # 0xF000 instruction set (Fxyy)
 def xF000 ():
-	global opcode, pc, sp, stack, memory, v, i, dt, st, key
+	global opcode, pc, sp, stack, memory, v, i, dt, st, key, debug
 
 	# Normalize the opcode to map the instruction
 	opc = opcode & int("F0FF", 16)
@@ -651,7 +687,8 @@ def xF000 ():
 	if (opc == "f007"):
 		v[x] = dt
 		pc += 2
-		print ("\tOpcode Fx07 executed. - Set Vx = delay timer value.")
+		if debug:
+			print ("\tOpcode Fx07 executed. - Set Vx = delay timer value.")
 
 
 	# Fx0A - LD Vx, K
@@ -664,11 +701,13 @@ def xF000 ():
 				v[x] = k
 				pressed = 1
 				pc +=2
-				print ("\tOpcode Fx0A executed. - Wait for a key press (PRESSED)")
+				if debug:
+					print ("\tOpcode Fx0A executed. - Wait for a key press (PRESSED)")
 				# Stop after find the first key pressed
 				break
 		if pressed == 0:
-				print ("\tOpcode Fx0A executed. - Wait for a key press (NOT PRESSED)")
+				if debug:
+					print ("\tOpcode Fx0A executed. - Wait for a key press (NOT PRESSED)")
 
 	# Fx15 - LD DT, Vx
 	# Set delay timer = Vx.
@@ -676,7 +715,8 @@ def xF000 ():
 	elif (opc =="f015"):
 		dt = v[x]
 		pc += 2
-		print ("\tOpcode Fx15 executed. - Set delay timer = Vx.")
+		if debug:
+			print ("\tOpcode Fx15 executed. - Set delay timer = Vx.")
 
 
 	# Fx18 - LD ST, Vx
@@ -685,7 +725,8 @@ def xF000 ():
 	elif (opc =="f018"):
 		st = v[x]
 		pc += 2
-		print ("\tOpcode Fx18 executed. - Set sound timer = Vx.")
+		if debug:
+			print ("\tOpcode Fx18 executed. - Set sound timer = Vx.")
 
 
 	# Fx1E - ADD I, Vx
@@ -694,7 +735,8 @@ def xF000 ():
 	elif (opc =="f01e"):
 		i += v[x]
 		pc += 2
-		print ("\tOpcode Fx1E executed. - Set I = I + Vx.")
+		if debug:
+			print ("\tOpcode Fx1E executed. - Set I = I + Vx.")
 
 
 	# Fx29 - LD F, Vx
@@ -704,7 +746,8 @@ def xF000 ():
 		#print (v[x])
 		i = v[x]  * 5
 		pc += 2
-		print ("\tOpcode Fx29 executed. - Set I = location of sprite for digit Vx. (*5)")
+		if debug:
+			print ("\tOpcode Fx29 executed. - Set I = location of sprite for digit Vx. (*5)")
 
 
 	# Fx33 - LD B, Vx
@@ -726,8 +769,8 @@ def xF000 ():
 		memory[i + 2] = math.trunc( (v[x] % 100) %10 )
 
 		pc += 2
-
-		print ("\tOpcode Fx33 executed. - Store BCD representation of Vx in memory locations I, I+1, and I+2.")
+		if debug:
+			print ("\tOpcode Fx33 executed. - Store BCD representation of Vx in memory locations I, I+1, and I+2.")
 
 
 	# Fx55 - LD [I], Vx
@@ -744,8 +787,8 @@ def xF000 ():
 		pc += 2
 
 		### Original Chip8 INCREMENT I in this instruction ###
-
-		print ("\tOpcode Fx55 executed. Store registers V0 through Vx in memory starting at location I.")
+		if debug:
+			print ("\tOpcode Fx55 executed. Store registers V0 through Vx in memory starting at location I.")
 
 
 	# Fx65 - LD Vx, [I]
@@ -763,8 +806,8 @@ def xF000 ():
 		pc += 2
 
 		### Original Chip8 INCREMENT I in this instruction ###
-
-		print ("\tOpcode Fx65 executed. Read registers V0 through Vx from memory starting at location I.")
+		if debug:
+			print ("\tOpcode Fx65 executed. Read registers V0 through Vx from memory starting at location I.")
 
 def soundtimer (value):
 	#print (value)
@@ -780,7 +823,7 @@ def soundtimer (value):
 
 ############################ MAIN CPU LOOP ############################
 def cpu():
-	global memory, pc, opc_family, dt, opcode, cycle, st, drawflag
+	global memory, pc, opc_family, dt, opcode, cycle, st, drawflag, ticker, ticker_millisec, debug
 
 	# Read the Opcode (mem[pc]+mem[pc+1])
 	# Format used to always have 2 digits
@@ -794,16 +837,15 @@ def cpu():
 	# Reset the Draw Flag
 	drawflag = 0
 
-	# Print the Debug Information
-	show()
+	# Print the debug Information
+	if debug:
+		show()
 
 	# Delay Timer
+	# Every ticker (cpu cycle sum > 16ms) decrease DelayTimer
 	if (dt > 0):
-		# Emulate 60hz = 1 / 60
-		time.sleep(0.00016)
-		dt -= 1
-		cycle += 1
-		return
+		if ticker:
+			dt -= 1
 
 	# Sound Timer
 	# if (st > 0):
@@ -858,6 +900,8 @@ def cpu():
 
 	# Increment the cycle (just for logging purposes)
 	cycle += 1
+	ticker = False
+
 
 
 ################################################################################
@@ -870,7 +914,7 @@ def initialize_graphics():
 
 	# create the display surface object
 	# of specific dimension..e(X,Y).
-	display_surface = pygame.display.set_mode( ( X * PIXEL_SIZE_X, Y * PIXEL_SIZE_Y ) )
+	display_surface = pygame.display.set_mode( ( X * Pixel_size_X, Y * Pixel_size_Y ) )
 
 	# set the pygame window name
 	pygame.display.set_caption('CHIP 8')
@@ -879,14 +923,14 @@ def initialize_graphics():
 	# with white colour
 	display_surface.fill(black)
 	#return display_surface
-	######
 
 
 ################################################################################
 ################################## MAIN LOOP ###################################
 
 def initialize_cpu_loop():
-	global key, display_surface, drawflag, pause, cycle_fwd
+	global key, display_surface, drawflag, pause, cycle_fwd, ticker, cycle_duration, cycle_duration_sum, FPS_LIMIT, debug
+
 	# infinite loop
 	while True :
 
@@ -990,7 +1034,7 @@ def initialize_cpu_loop():
 					if (gfxindex < 64):
 						x=gfxindex
 						y=0
-						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
+						pygame.draw.rect(display_surface, white, (x*20, y*20, Pixel_size_X, Pixel_size_Y))
 					else:
 						y=0
 						nro=gfxindex
@@ -998,7 +1042,7 @@ def initialize_cpu_loop():
 							nro -= 64
 							y = y + 1
 							x = nro
-						pygame.draw.rect(display_surface, white, (x*20, y*20, PIXEL_SIZE_X, PIXEL_SIZE_Y))
+						pygame.draw.rect(display_surface, white, (x*20, y*20, Pixel_size_X, Pixel_size_Y))
 			### RENDER MODE 1
 			### Slow, need to draw the entire screen each draw instruction
 			pygame.display.flip()
@@ -1016,19 +1060,35 @@ def initialize_cpu_loop():
 		# Release Buttons
 		key = [0] * 16
 
-		# DEBUG - SEARCH FOR VALUES LARGER THAN 255 in V[]
+		### TIMER ###
+		# Track the time spent on every cycle
+		# When sum 16 milliseconds (1 second / 60) to simulate 1Hz
+		# Set Ticker and reset counter
+		cycle_duration = clock.tick(FPS_LIMIT) #300 FPS LIMIT
+		cycle_duration_sum += cycle_duration
+		if debug:
+			print ("Cycle duration: " + str(cycle_duration))
+			print ("Cycle duration SUM: " + str(cycle_duration_sum))
+		if (cycle_duration_sum) > ticker_millisec:
+			if debug:
+				print ("Timer count > " + str(ticker_millisec) + " ms. Clock Ticker SET!")
+			cycle_duration_sum = 0
+			ticker = True
+
+		# debug - SEARCH FOR VALUES LARGER THAN 255 in V[]
 		#for k in range(0, 15):
 		#	if (v[k] > 255):
 		#		print ("\tValue bigger than 255 detected on v[x] (8bits array). EXITING")
 		#		show()
 		#		exit()
 
-		# DEBUG - SEARCH FOR NEGATIVE VALUES in V[]
+		# debug - SEARCH FOR NEGATIVE VALUES in V[]
 		#for k in range(0, 15):
 		#	if (v[k] < 0):
 		#		print ("\tNegative value detected. EXITING")
 		#		show()
 		#		exit()
+
 
 
 ################################################################################
@@ -1043,6 +1103,9 @@ load_rom(sys.argv[1], memory)
 
 # Load hardcoded ROM NAME
 initialize_fonts(memory)
+clock = pygame.time.Clock()
+
+
 #show_memory_binary(memory)
 #show_memory_hex(memory)
 #show_graphics(graphics)
