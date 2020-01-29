@@ -140,13 +140,19 @@ def show_graphics(graphics):
 
 ############################ 0x0000 instruction set ############################
 def x0000 ():
-	global  opcode, pc, sp, stack, graphics, debug
+	global  opcode, pc, sp, stack, graphics, debug, v, i
+
+	x = opcode & int("0F00", 16)
+	x = x >> 8 # Need just the first byte
+
+	opc = opcode & int("00FF", 16)
+
 
 	# 00EE - RET
     # Return from a subroutine
     # The interpreter sets the program counter to the address at the top of the stack, then subtracts 1 from the stack pointer.
     # ### MUST MOVE TO NEXT ADDRESS AFTER THIS (PC+=2)
-	if (hex(opcode) == "0xee"):
+	if (hex(opc) == "0xee"):
 		# Return SP to the address in the top of the stack
 		pc = stack[sp]
 		# Move to next instruction
@@ -159,13 +165,30 @@ def x0000 ():
 
 	# 00E0 - CLS
 	# Clear the display.
-	elif (hex(opcode) !=" 0xee" ):
+	elif (hex(opc) == "0xe0" ):
 		graphics = [0] * 64 * 32
 		pc += 2
 
 		if debug:
-			print ("\tOpcode 0xee executed. - Clear the display.")
+			print ("\tOpcode 0xe0 executed. - Clear the display.")
 
+	# 02D8
+	# NOT DOCUMENTED OPCODED, USED BY DEMO CLOCK Program
+	# LDA 02, I // Load from memory at address I into V[00] to V[02]
+	elif (hex(opc) == "0xd8" ):
+
+		if x != 2:
+			#Map if this opcode can receive a different value here
+			exit()
+
+		v[0] = i
+		v[1] = i + 1
+		v[2] = i + 2
+
+		pc += 2
+
+		if debug:
+			print ("\tOpcode 02DB executed (NOT DOCUMENTED). - Load from memory at address I into V[0], V[1] and V[2]")
 
 ############################ 0x1000 instruction set ############################
 # 1nnn - JP addr
