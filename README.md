@@ -10,9 +10,9 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 
 ## Requirements
 - Python3
-- Pygame (on MAC, 2.0.0.dev5 or latest)
+- Pygame
 
-	`$ pip install pygame==2.0.0.dev5`
+	`$ pip3 install pygame`
 
 
 ## Usage
@@ -32,8 +32,14 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 	`$ chmod +x chip8.py`
 
 	`$ ./chip8.py ROM_NAME`
+	
+3. Core options:
 
-3. Keys
+	* Enable/Disable Debug mode:
+	Change the variable 'debug' to True|False into chip8.py
+	
+	
+4. Keys
 - Original COSMAC Keyboard Layout:
 
 	`1` `2` `3` `C`
@@ -68,7 +74,3 @@ CHIP-8 Emulator writen in Python3 with simple code to be easy to be studied and 
 [How to write an emulator (CHIP-8 interpreter) — Multigesture.net](http://www.multigesture.net/articles/how-to-write-an-emulator-chip-8-interpreter/)
 
 [Wikipedia - CHIP-8](https://en.wikipedia.org/wiki/CHIP-8)
-
-## Improvements
-1. Key pressing cause slowness
-2. Improve draw method
